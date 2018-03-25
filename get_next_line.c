@@ -6,7 +6,7 @@
 /*   By: vlevko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/22 20:51:51 by vlevko            #+#    #+#             */
-/*   Updated: 2017/12/30 00:37:24 by vlevko           ###   ########.fr       */
+/*   Updated: 2018/03/25 14:42:56 by vlevko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,13 @@ int	gnl_free(char **s1, char **s2, char **s3, int ret)
 	return (ret);
 }
 
-int	gnl_init(int fd, int *ret, t_glist **curr, t_glist **gnl)
+int	gnl_init(int fd, int *ret, t_gnl **curr, t_gnl **gnl)
 {
 	while (*curr != NULL && (*curr)->fd != fd)
 		*curr = (*curr)->next;
 	if (*curr == NULL)
 	{
-		*curr = (t_glist *)malloc(sizeof(t_glist));
+		*curr = (t_gnl *)malloc(sizeof(t_gnl));
 		(*curr)->fd = fd;
 		(*curr)->buff = NULL;
 		(*curr)->next = NULL;
@@ -41,7 +41,7 @@ int	gnl_init(int fd, int *ret, t_glist **curr, t_glist **gnl)
 	}
 	if ((*curr)->buff == NULL)
 	{
-		if(!((*curr)->buff = ft_strnew(BUFF_SIZE)))
+		if (!((*curr)->buff = ft_strnew(BUFF_SIZE)))
 			return (-1);
 		if ((*ret = read((*curr)->fd, (*curr)->buff, BUFF_SIZE)) == -1)
 			return (gnl_free(&((*curr)->buff), NULL, NULL, -1));
@@ -51,7 +51,7 @@ int	gnl_init(int fd, int *ret, t_glist **curr, t_glist **gnl)
 	return (0);
 }
 
-int	gnl_br(int i, int ret, t_glist *curr, char *temp)
+int	gnl_br(int i, int ret, t_gnl *curr, char *temp)
 {
 	if (curr->res == NULL)
 	{
@@ -79,7 +79,7 @@ int	gnl_br(int i, int ret, t_glist *curr, char *temp)
 	return (0);
 }
 
-int	gnl_nobr(int *i, int *ret, t_glist *curr, char *temp)
+int	gnl_nobr(int *i, int *ret, t_gnl *curr, char *temp)
 {
 	if (*i == *ret)
 	{
@@ -108,19 +108,19 @@ int	get_next_line(const int fd, char **line)
 {
 	int				i;
 	int				ret;
-	t_glist			*curr;
-	static t_glist	*gnl = NULL;
+	t_gnl			*curr;
+	static t_gnl	*gnl = NULL;
 
 	curr = gnl;
-	if (BUFF_SIZE <= 0 || BUFF_SIZE > 2097152 || fd < 0 || fd >= 1000000 || 
-		line == NULL || (i = gnl_init(fd, &ret, &curr, &gnl)) == -1)
+	if (BUFF_SIZE <= 0 || fd < 0 || fd >= 1000000 || line == NULL || \
+		(i = gnl_init(fd, &ret, &curr, &gnl)) == -1)
 		return (-1);
 	if (ret == 0)
 		return (gnl_free(&(curr->buff), NULL, NULL, 0));
 	while (i < ret && curr->buff[i] != '\0')
 		if (curr->buff[i++] == '\n')
 		{
-			if (gnl_br(i, ret, curr, NULL) == -1 || !(*line = ft_strdup(curr->res)))
+			if (gnl_br(i, ret, curr, NULL) || !(*line = ft_strdup(curr->res)))
 				return (gnl_free(&(curr->buff), &(curr->res), NULL, -1));
 			return (gnl_free(&(curr->res), NULL, NULL, 1));
 		}

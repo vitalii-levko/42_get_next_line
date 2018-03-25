@@ -6,7 +6,7 @@
 /*   By: vlevko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/28 15:00:05 by vlevko            #+#    #+#             */
-/*   Updated: 2018/01/28 15:03:03 by vlevko           ###   ########.fr       */
+/*   Updated: 2018/03/25 14:07:50 by vlevko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@
 # include "libft/includes/libft.h"
 # define BUFF_SIZE 4096
 
-typedef struct		s_glist
+typedef struct		s_gnl
 {
 	int				fd;
 	char			*buff;
 	char			*res;
-	char			*str;	
-	struct s_glist	*next;
-}					t_glist;
+	char			*str;
+	struct s_gnl	*next;
+}					t_gnl;
 
 int					get_next_line(const int fd, char **line);
 
